@@ -9,19 +9,31 @@ class App extends React.Component {
     super(props);
     this.state = {
       hits: [],
-      isLoading: false
+      isLoading: false,
+      error: null
     };
   }
 
   componentDidMount() {
     this.setState({ isLoading: true });
     fetch(API + DEFAULT_QUERY)
-      .then(response => response.json())
-      .then((data) => this.setState({ hits: data.hits, isLoading: false }));
+      .then((response) => {
+        if(response.ok) {
+          return response.json();
+        }
+        else {
+          throw new Error('something went wrong.......')
+        }
+      })
+      .then((data) => this.setState({ hits: data.hits, isLoading: false }))
+      .catch((error) => this.setState({ error:error, isLoading: false }));
   }
   render(){
     const isLoading = this.state.isLoading;
-
+    const error = this.state.error
+    if(error) {
+      return (<p>{error.message}</p>)
+    }
     if(isLoading){
       return (<p>Loading......</p>);
     }
