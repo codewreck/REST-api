@@ -8,19 +8,38 @@ class App extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      hits: []
+      hits: [],
+      isLoading: false
     };
   }
 
   componentDidMount() {
+    this.setState({ isLoading: true });
     fetch(API + DEFAULT_QUERY)
       .then(response => response.json())
-      .then((data) => this.setState({ hits: data.hits }));
+      .then((data) => this.setState({ hits: data.hits, isLoading: false }));
   }
   render(){
-    return (
-      <List hits={this.state.hits} />
-    )
+    const isLoading = this.state.isLoading;
+
+    if(isLoading){
+      return (<p>Loading......</p>);
+    }
+    else {
+      return (
+        <div>
+          <List hits={this.state.hits} />
+        </div>
+      );
+    }
+    // return (
+    //   <div>
+    //     {
+    //       isLoading ? (<p>load</p>) : (<List hits={this.state.hits}/>)
+    //     }
+    //   </div>
+    // )
+
   }
 }
 
